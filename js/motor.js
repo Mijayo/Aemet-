@@ -14,7 +14,22 @@ function carga(info) {
         .then(query => query.json())
         .then(aemet => {
             for (let i = 0; i < aemet.length; i++) {
+                //console.log(aemet[i].nombre);
                 document.getElementById("titulo").innerHTML = aemet[i].nombre;
+                document.getElementById("subT").innerHTML = aemet[i].provincia;
+                for (let x = 0; x < aemet[i].prediccion.dia.length; x++) {
+                    var estado = parseInt(aemet[i].prediccion.dia[x].estadoCielo[0].value);
+                    estCielo(estado);
+                    console.log(estado);
+                }
             }
         })
+}
+
+function estCielo(estado) {
+    // alert('hola');
+    switch (estado) {
+        case 12:
+            document.getElementById("txt").innerHTML = estado;
+    }
 }
