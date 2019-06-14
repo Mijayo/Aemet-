@@ -35,6 +35,7 @@ function carga(info) {
                 year = hol.getFullYear(),
                 fecha = year + "-" + month + "-" + day;
 
+            //Cambio de fondo
             hora >= 6 && hora < 22 ? dude = "dia" : dude = "noche";
             cambiarFondo(hora)
 
@@ -52,55 +53,55 @@ function carga(info) {
                 // Calculo de dias de la semana
                 calculoDiasSemana(semana, days);
 
-                // for (let z = 0; z < aemet[i].prediccion.dia.length; z++) {
+                for (let z = 0; z < aemet[i].prediccion.dia.length; z++) {
 
-                //     for (let t = 0; t < aemet[i].prediccion.dia[z].estadoCielo.length; t++) {
-                //         let estado = aemet[i].prediccion.dia[z].estadoCielo[t].descripcion;
-                //         console.log(aemet[i].prediccion.dia[z].estadoCielo[t].descripcion);
-                //         switch (estado) {
-                //             case "Despejado":
-                //                 sun++;
-                //                 break;
-                //             case "Poco nuboso":
-                //                 nub++;
-                //                 break;
-                //         }
-                //     }
+                    for (let t = 0; t < aemet[i].prediccion.dia[z].estadoCielo.length; t++) {
+                        let estado = aemet[i].prediccion.dia[z].estadoCielo[t].descripcion;
+                        console.log(aemet[i].prediccion.dia[z].estadoCielo[t].descripcion);
+                        switch (estado) {
+                            case "Despejado":
+                                sun++;
+                                break;
+                            case "Poco nuboso":
+                                nub++;
+                                break;
+                        }
+                    }
 
-                //     let estadoCielo = Math.max(sun, nub);
+                    let estadoCielo = Math.max(sun, nub);
 
-                //     $(function() {
-                //         if (cont < 8) {
-                //             actualday = semana[cont - 1];
-                //             cont++;
-                //         } else {
-                //             cont = 1;
-                //             actualday = semana[cont - 1];
-                //             cont++;
-                //         }
-                //         $('#grafo').append('<div class="container"><p class="dia">' + actualday + '</p><div class="cajita">' +
-                //             '</p><p class="max">' + aemet[i].prediccion.dia[z].temperatura.maxima +
-                //             '</p><p class="min">' + aemet[i].prediccion.dia[z].temperatura.minima + '</p></div></div>');
-                //         switch (dude) {
-                //             case "dia":
-                //                 if (estadoCielo == sun) {
-                //                     $('.container').append('<div class="contimg"><img class="estadosky" src="png/022-sun.png"></div>');
-                //                 } else if (estadoCielo == nub) {
-                //                     $('.container').append('<div class="contimg"><img class="estadosky" src="png/023-sunny.png"</div>');
-                //                 }
-                //                 break;
 
-                //             case "noche":
-                //                 if (estadoCielo == sun) {
-                //                     $('.container').append('<div class="contimg"><img class="estadosky" src="png/012-night-1.png"></div>');
-                //                 } else if (estadoCielo == nub) {
-                //                     $('.container').append('<div class="contimg"><img class="estadosky" src="png/011-night.png"</div>');
-                //                 }
-                //                 break;
+                    if (cont < 8) {
+                        actualday = semana[cont - 1];
+                        cont++;
+                    } else {
+                        cont = 1;
+                        actualday = semana[cont - 1];
+                        cont++;
+                    }
+                    $('#grafo').append('<div class="container"><p class="dia">' + actualday + '</p><div class="cajita">' +
+                        '</p><p class="max">' + aemet[i].prediccion.dia[z].temperatura.maxima +
+                        '</p><p class="min">' + aemet[i].prediccion.dia[z].temperatura.minima + '</p></div></div>');
+                    switch (dude) {
+                        case "dia":
+                            if (estadoCielo == sun) {
+                                $('.container').append('<div class="contimg"><img class="estadosky" src="png/022-sun.png"></div>');
+                            } else if (estadoCielo == nub) {
+                                $('.container').append('<div class="contimg"><img class="estadosky" src="png/023-sunny.png"</div>');
+                            }
+                            break;
 
-                //         }
-                //     });
-                // }
+                        case "noche":
+                            if (estadoCielo == sun) {
+                                $('.container').append('<div class="contimg"><img class="estadosky" src="png/012-night-1.png"></div>');
+                            } else if (estadoCielo == nub) {
+                                $('.container').append('<div class="contimg"><img class="estadosky" src="png/011-night.png"</div>');
+                            }
+                            break;
+
+                    }
+
+                }
             }
         });
 }
