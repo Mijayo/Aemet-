@@ -2,20 +2,17 @@ const CP = 28027;
 const KEY = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZHJpYW4ucGVyZXouZ2FyY2lhMjAxOEBnbWFpbC5jb20iLCJqdGkiOiI0OWM1ZmJmZS03ODc3LTQyYzItOGY5Ny04NWNiY2VlMjZlNmYiLCJpc3MiOiJBRU1FVCIsImlhdCI6MTU2MDMyMjE3MywidXNlcklkIjoiNDljNWZiZmUtNzg3Ny00MmMyLThmOTctODVjYmNlZTI2ZTZmIiwicm9sZSI6IiJ9.Hpv4mhwe0-2XJZrMmN9DtOJ-LEQClf_h5Gh02eCguis";
 const URL = `https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/diaria/${CP}/?api_key=${KEY}`;
 
-let sun = 0;
-let sunnub = 0;
-let nub = 0;
-let nubrain = 0;
-let thundernub = 0;
-let snow = 0;
-let snownub = 0;
-let thundernubrain = 0;
-let dude;
-var semana = [
-    "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sábado", "Domingo"
-];
-
-//Hacemos la conexion con la web
+let cont = 0,
+    franjahoraria = "";
+var semana = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+let sun = 0,
+    // sunnub = 0,
+    nub = 0,
+    nubrain = 0,
+    // thundernub = 0,
+    // snow = 0,
+    // snownub = 0,
+    thundernubrain = 0;
 fetch(URL)
     .then(datos => datos.json())
     .then(tiempo => {
@@ -27,118 +24,119 @@ function carga(info) {
     fetch(info)
         .then(query => query.json())
         .then(aemet => {
-            let hol = new Date(),
-                days = hol.getDay(),
-                hora = hol.getHours(),
-                day = hol.getDate(),
-                month = "0" + (1 + hol.getMonth()),
-                year = hol.getFullYear(),
-                fecha = year + "-" + month + "-" + day;
+            let fecha = new Date(),
+                posicionDia = fecha.getDay(),
+                dia = fecha.getDate(),
+                hora = fecha.getHours(),
+                mes = "0" + (1 + fecha.getMonth()),
+                ano = fecha.getFullYear(),
+                fechaCompleta = ano + "-" + mes + "-" + dia;
 
-            //Cambio de fondo
-            hora >= 6 && hora < 22 ? dude = "dia" : dude = "noche";
-            cambiarFondo(hora)
+            //Calculo de la franja horaria y cambio de fondo dependiendo de la hora
+            cambioFondo(hora);
 
             for (let i = 0; i < aemet.length; i++) {
-                document.getElementById("titulo").innerHTML = aemet[i].provincia;
-                if (dude == dude) {
-                    document.getElementById("dude").innerHTML = '<img class="icondude" src="png/022-sun.png">';
-                } else {
-                    document.getElementById("dude").innerHTML = '<img class="icondude" src="png/011-night.png">';
-                }
+                document.getElementById("titulo").innerHTML = `${aemet[i].provincia} ${aemet[i].id}`;
 
-                // Calculo de los grados 
-                calculoGrados(aemet[i].prediccion.dia, hora, fecha);
+                // Calculamos el estado del cielo 
+                tiempoDia(aemet[i].prediccion.dia[1].estadoCielo[i].descripcion);
+                // Calculamos los grados
+                tiempoGrados(aemet[i].prediccion.dia, hora, fechaCompleta);
+                //Calculo del dia en el que estamos
+                calculoTiempXDia(aemet[i].prediccion.dia, hora);
 
-                // Calculo de dias de la semana
-                calculoDiasSemana(semana, days);
-
-                for (let z = 0; z < aemet[i].prediccion.dia.length; z++) {
-
-                    for (let t = 0; t < aemet[i].prediccion.dia[z].estadoCielo.length; t++) {
-                        let estado = aemet[i].prediccion.dia[z].estadoCielo[t].descripcion;
-                        console.log(aemet[i].prediccion.dia[z].estadoCielo[t].descripcion);
-                        switch (estado) {
-                            case "Despejado":
-                                sun++;
-                                break;
-                            case "Poco nuboso":
-                                nub++;
-                                break;
-                        }
-                    }
-
-                    let estadoCielo = Math.max(sun, nub);
-
-
-                    if (cont < 8) {
-                        actualday = semana[cont - 1];
-                        cont++;
-                    } else {
-                        cont = 1;
-                        actualday = semana[cont - 1];
-                        cont++;
-                    }
-                    $('#grafo').append('<div class="container"><p class="dia">' + actualday + '</p><div class="cajita">' +
-                        '</p><p class="max">' + aemet[i].prediccion.dia[z].temperatura.maxima +
-                        '</p><p class="min">' + aemet[i].prediccion.dia[z].temperatura.minima + '</p></div></div>');
-                    switch (dude) {
-                        case "dia":
-                            if (estadoCielo == sun) {
-                                $('.container').append('<div class="contimg"><img class="estadosky" src="png/022-sun.png"></div>');
-                            } else if (estadoCielo == nub) {
-                                $('.container').append('<div class="contimg"><img class="estadosky" src="png/023-sunny.png"</div>');
-                            }
-                            break;
-
-                        case "noche":
-                            if (estadoCielo == sun) {
-                                $('.container').append('<div class="contimg"><img class="estadosky" src="png/012-night-1.png"></div>');
-                            } else if (estadoCielo == nub) {
-                                $('.container').append('<div class="contimg"><img class="estadosky" src="png/011-night.png"</div>');
-                            }
-                            break;
-
-                    }
-
-                }
             }
         });
 }
 
-function cambiarFondo(x) {
-    if (x >= 6 && x < 8) {
+function cambioFondo(x) {
+    if (x >= 6 && x < 12) {
+        franjahoraria = "mañana";
         $('body').css({ "background-color": "rgb(0, 119, 216)" });
-    } else if (x >= 8 && x < 22) {
+    } else if (x >= 12 && x < 15) {
+        franjahoraria = "media dia";
         $('body').css({ "background-color": "rgb(0, 171, 238)" });
-    } else if (x >= 22 && x < 23) {
+    } else if (x >= 15 && x < 21) {
+        franjahoraria = "tarde";
         $('body').css({ "background-color": "rgb(2, 89, 160)" });
-    } else {
+    } else if (x >= 21 && x < 12) {
+        franjahoraria = "noche";
+        $('body').css({ "background-color": "rgb(0, 50, 92)" });
+    } else if (x >= 12 && x < 6) {
+        franjahoraria = "media noche";
         $('body').css({ "background-color": "rgb(0, 50, 92)" });
     }
 }
 
-function calculoGrados(m, hora, fecha) {
-    for (let x = 0; x < m.length; x++) {
-        if (m[x].fecha == fecha) {
-            if (hora >= 6 && hora < 12) {
-                document.getElementById("temp_tit").innerHTML = m[x].temperatura.dato[0].value + "º";
-            } else if (hora >= 12 && hora < 18) {
-                document.getElementById("temp_tit").innerHTML = m[x].temperatura.dato[1].value + "º";
-            } else if (hora >= 18 && hora < 24) {
-                document.getElementById("temp_tit").innerHTML = m[x].temperatura.dato[2].value + "º";
+function tiempoDia(x) {
+    if (x == "Despejado") {
+        document.getElementById("dude").innerHTML = '<img class="icondude" src="png/022-sun.png">';
+    } else if (x == "Poco nuboso" || x == "Muy nuboso") {
+        document.getElementById("dude").innerHTML = '<img class="icondude" src="png/023-sunny.png">';
+    } else if (x == "Tormenta") {
+        document.getElementById("dude").innerHTML = '<img class="icondude" src="png/029-storm.png">';
+    }
+}
+
+function tiempoGrados(x, h, f) {
+    for (let r = 0; r < x.length; x++) {
+        if (x[r].fecha == f) {
+            if (h >= 6 && h < 12) {
+                document.getElementById("temp_tit").innerHTML = x[r].temperatura.dato[0].value + "º";
+            } else if (h >= 12 && h < 18) {
+                document.getElementById("temp_tit").innerHTML = x[r].temperatura.dato[1].value + "º";
+            } else if (h >= 18 && h < 24) {
+                document.getElementById("temp_tit").innerHTML = x[r].temperatura.dato[2].value + "º";
             } else {
-                document.getElementById("temp_tit").innerHTML = m[x].temperatura.dato[3].value + "º";
+                document.getElementById("temp_tit").innerHTML = x[r].temperatura.dato[3].value + "º";
             }
         }
     }
 }
 
-function calculoDiasSemana(s, d) {
-    for (var r = 0; r < s.length; r++) {
-        if (r == d) {
-            var cont = r;
+function calculoDiasSemana() {
+    for (let r = 0; r < semana.length; r++) {
+        if (r == days) {
+            cont = r;
             return cont;
         }
     }
+}
+
+function calculoTiempXDia(x, h) {
+
+    for (let z = 0; z < x.length; z++) {
+        let estadoCielo = Math.max(sun, nub, nubrain, thundernubrain);
+        for (let t = 0; t < x[z].estadoCielo.length; t++) {
+
+            let estado = x[z].estadoCielo[t].descripcion;
+            if (estado == "Despejado") {
+                sun++;
+            } else if (estado == "Poco nuboso") {
+                nub++;
+            } else if (estado == "Muy nuboso") {
+                nubrain++;
+            } else if (estado == "Tormenta") {
+                thundernubrain++;
+            }
+        }
+        calculoDiaActual(cont, h, estadoCielo);
+    }
+}
+
+function calculoDiaActual(a, h, e) {
+    if (a < 8) {
+        actualday = semana[cont];
+        cont++;
+    } else {
+        cont = 1;
+        actualday = semana[cont];
+        cont++;
+    }
+    $('#grafo').append('<div class="container"><p class="dia">' + actualday + '</p></div>');
+    // if (e == sun) {
+    //     $('.container').append('<div class="contimg"><img class="estadosky" src="png/022-sun.png"></div>');
+    // } else if (e == nub) {
+    //     $('.container').append('<div class="contimg"><img class="estadosky" src="png/023-sunny.png"</div>');
+    // }
 }
