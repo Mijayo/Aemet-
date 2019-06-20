@@ -27,7 +27,7 @@ function carga(info) {
 }
 
 function estCielo(estado) {
-    // alert('hola');
+    //alert('hola');
     switch (estado) {
         case 12:
             document.getElementById("txt").innerHTML = estado;
