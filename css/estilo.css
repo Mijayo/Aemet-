@@ -1,0 +1,108 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+#titulo {
+    padding: 2vh;
+    color: rgb(255, 255, 255);
+    font-size: 4em;
+    text-align: center;
+}
+
+.contprincss {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.329);
+    width: 80%;
+    padding: 1%;
+}
+
+#temp_tit {
+    color: white;
+    font-size: 4em;
+}
+
+.cajita {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+#grafo {
+    display: flex;
+    justify-content: space-evenly;
+    width: 80%;
+    padding: 5% 0 0 0;
+}
+
+.max {
+    font-size: 2em;
+    color: white;
+}
+
+.min {
+    font-size: 1.3em;
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.container {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.dia {
+    font-size: 1em;
+    color: white;
+}
+
+.contimg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 3%;
+}
+
+.estadosky {
+    width: 50%;
+    height: cover;
+}
+
+.icondude {
+    width: 20%;
+}
+
+#tiempo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.botones {
+    width: 82%;
+    display: flex;
+    justify-content: center;
+}
+
+.boton {
+    width: 30%;
+    background: white;
+    padding: 2%;
+    text-align: center;
+    margin: 3% 0 1% 0;
+}
